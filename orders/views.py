@@ -117,7 +117,7 @@ def save_orders(request):
             amount=message.get('amount'),
             payment=message.get('payment'),
             status=0,
-            order_time=message.get('order_time'),
+            order_time=now_time,
             creator=message.get('creator'),
             create_time=now_time,
             updater=message.get('updater'),
