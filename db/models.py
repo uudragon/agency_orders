@@ -34,7 +34,7 @@ class OrdersDetails(models.Model):
     name = models.CharField(db_column='NAME', max_length=255, null=False)
     qty = models.IntegerField(db_column='QTY', max_length=11, default='1')
     type = models.IntegerField(db_column='TYPE', max_length=4, default=0)
-    amount = models.PositiveSmallIntegerField(db_column='AMOUNT', max_digits=20, decimal_places=2, default=0.00)
+    amount = models.DecimalField(db_column='AMOUNT', max_digits=20, decimal_places=2, default=0.00)
 
     class Meta:
         db_table = 'T_ORDERS_DETAILS'
