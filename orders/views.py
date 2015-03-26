@@ -33,7 +33,7 @@ def query_agency_orderss(request, agent_id):
     resp_message = dict()
 
     try:
-        orders_list = Orders.objects.filter(createor=agent_id).order_by('order_time')
+        orders_list = Orders.objects.filter(creator=agent_id).order_by('order_time')
         paginator = Paginator(orders_list, pageSize, orphans=0, allow_empty_first_page=True)
         total_page_count = paginator.num_pages
         if pageNo > total_page_count:
