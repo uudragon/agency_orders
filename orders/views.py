@@ -28,6 +28,8 @@ def query_agency_orderss(request, agent_id):
     if pageNo is None or pageNo == 0:
         pageNo = 1
 
+    LOG.debug('Current message is %s' % message)
+
     resp_message = dict()
 
     for key in message.iterkeys():
