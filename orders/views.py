@@ -15,9 +15,9 @@ from uudragon_agency.local.settings import DEFAULT_PAGE_SIZE, STATUS_PAYMENT_COM
 LOG = logging.getLogger(__name__)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def query_agency_orderss(request):
-    message = request.DATA
+    message = request.GET
 
     LOG.info('Current method is [query_agency_orders], received message is %s' % message)
 
