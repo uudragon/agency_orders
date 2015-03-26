@@ -21,10 +21,10 @@ def query_agency_orderss(request, agent_id):
 
     LOG.info('Current method is [query_agency_orders], received message is %s' % message)
 
-    pageSize = message.pop('pageSize')
+    pageSize = message.get('pageSize')
     if pageSize is None or pageSize == 0:
         pageSize = DEFAULT_PAGE_SIZE
-    pageNo = message.pop('pageNo')
+    pageNo = message.get('pageNo')
     if pageNo is None or pageNo == 0:
         pageNo = 1
 
@@ -32,12 +32,8 @@ def query_agency_orderss(request, agent_id):
 
     resp_message = dict()
 
-    for key in message.iterkeys():
-        key += '__contains'
-        LOG.debug('Condition of query is %s' % message)
-
     try:
-        orders_list = Orders.objects.filter(**message).filter(createor=agent_id).order_by('order_time')
+        orders_list = Orders.objects.filter(createor=agent_id).order_by('order_time')
         paginator = Paginator(orders_list, pageSize, orphans=0, allow_empty_first_page=True)
         total_page_count = paginator.num_pages
         if pageNo > total_page_count:
