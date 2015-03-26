@@ -16,7 +16,7 @@ LOG = logging.getLogger(__name__)
 
 
 @api_view(['GET'])
-def query_agency_orderss(request):
+def query_agency_orderss(request, agent_id):
     message = request.GET
 
     LOG.info('Current method is [query_agency_orders], received message is %s' % message)
@@ -35,7 +35,7 @@ def query_agency_orderss(request):
         LOG.debug('Condition of query is %s' % message)
 
     try:
-        orders_list = Orders.objects.filter(**message).order_by('order_time')
+        orders_list = Orders.objects.filter(**message).filter(createor=agent_id).order_by('order_time')
         paginator = Paginator(orders_list, pageSize, orphans=0, allow_empty_first_page=True)
         total_page_count = paginator.num_pages
         if pageNo > total_page_count:
