@@ -4,7 +4,7 @@ __author__ = 'pluto'
 
 urlpatterns = patterns(
     'orders.views',
-    url(r'^query_orderss/$', 'query_agency_orderss'),
+    url(r'^query_orderss/(.+)/$', 'query_agency_orderss'),
     url(r'^save/$', 'save_orders'),
     url(r'^payment/(.+)/completed/$', 'payment_completed'),
     url(r'^payment/(.+)/rollback/$', 'payment_rollback'),
