@@ -89,9 +89,9 @@ error| String  | 错误信息
 #####2. 代理商订单查询接口
 此接口用于查询代理商订单列表
 ######2.1 url
-	method: POST
-	agency/orders/query_orderss/
-	注意：结尾的’/’不能省略
+	method: GET
+	agency/orders/query_orderss/${agent_no}/
+	注意：结尾的’/’不能省略, agent_no为代理商编号
 ######2.2 header
 	Content_Type:application/json;charset=utf-8
 	Accept:application/json
