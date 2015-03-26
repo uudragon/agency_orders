@@ -4,10 +4,10 @@ from django.core.paginator import Paginator
 
 # Create your views here.
 from django.db import transaction
-from requests import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from db.models import Orders, OrdersDetails, OrdersDetails
+from rest_framework.response import Response
+from db.models import Orders, OrdersDetails
 from serializers.serializers import OrdersSerializer, OrdersDetailsSerializer
 from uudragon_agency.local.settings import DEFAULT_PAGE_SIZE, STATUS_PAYMENT_COMPLETED, STATUS_PAYMENT_ROLLBACK, \
     STATUS_CHECK_COMPLETED
