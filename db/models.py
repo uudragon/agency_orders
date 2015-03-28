@@ -29,7 +29,7 @@ class Orders(models.Model):
 
 class OrdersDetails(models.Model):
     id = models.CharField(db_column='ID', primary_key=True, max_length=73)
-    orders_no = models.CharField(db_column='ORDER_NO', max_length=36, null=False)
+    order_no = models.CharField(db_column='ORDER_NO', max_length=36, null=False)
     code = models.CharField(db_column='CODE', max_length=36, null=False)
     name = models.CharField(db_column='NAME', max_length=255, null=False)
     qty = models.IntegerField(db_column='QTY', max_length=11, default='1')
