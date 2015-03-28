@@ -154,7 +154,8 @@ def payment_completed(request, orders_no):
 
 @api_view(['GET'])
 @transaction.commit_manually
-def payment_rollback(request, orders_no):
+def payment_rollback(request):
+    orders_no = request.GET.get('out_trade_no')
     LOG.info('Current method is [payment_rollback], received [orders_no] is %s' % orders_no)
 
     try:
