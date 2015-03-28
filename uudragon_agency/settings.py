@@ -1,5 +1,5 @@
 """
-Django settings for uudragon_wms project.
+Django settings for uudragon_agency project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -55,9 +55,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'uudragon_wms.urls'
+ROOT_URLCONF = 'uudragon_agency.urls'
 
-WSGI_APPLICATION = 'uudragon_wms.wsgi.application'
+WSGI_APPLICATION = 'uudragon_agency.wsgi.application'
 
 
 # Database
@@ -140,7 +140,7 @@ LOG_CONFIG = {
         # },
     },
     'handlers': {
-        'wms': {
+        'agency': {
             'level': 'DEBUG',
             'filters': None,
             'class': 'logging.handlers.TimedRotatingFileHandler',
@@ -151,7 +151,7 @@ LOG_CONFIG = {
         },
     'loggers': {
         '': {
-            'handlers': ['wms'],
+            'handlers': ['agency'],
             'level': 'DEBUG' if DEBUG else 'INFO',
             'propagate': True,
             }
