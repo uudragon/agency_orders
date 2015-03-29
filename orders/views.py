@@ -72,7 +72,7 @@ def query_agency_orders(request, orders_no):
 
     resp_message = None
     try:
-        orders = Orders.object.filter(order_no=orders_no).first()
+        orders = Orders.objects.filter(order_no=orders_no).first()
         orders_seria = OrdersSerializer(orders)
         orders_details = OrdersDetails.objects.filter(order_no=orders_no)
         details_seria = []
