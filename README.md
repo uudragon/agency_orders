@@ -5,6 +5,7 @@
 - [支付完成接口](#41-url)
 - [退款接口](#51-url)
 - [审查完成接口](#61-url)
+- [管理端查询代理商订单接口](#71-url)
 
 #####1.代理商订单保存接口
 接收客服系统发送的订单信息，按照一定规则将其拆分成发货单并返回将发货单信息返回给客服系统
@@ -366,3 +367,100 @@ error| String  | 错误信息
 样例报文：
 
 	{'error':'Payment error.'}
+	
+----
+
+#####2. 代理商订单查询接口
+此接口用于查询代理商订单列表
+######2.1 url
+	method: GET
+	agency/orders/query_all/
+	注意：结尾的’/’不能省略
+######2.2 header
+	Content_Type:application/json;charset=utf-8
+	Accept:application/json
+######2.3 请求参数
+名称|类型|是否必填|说明
+---|---|---|---
+pageSize|Int|Y|每页显示记录数
+pageNo|Int|Y|当前页号
+agent_id|String|O|代理商号
+orders_type|INT|O|订单类型。0：首期订单；1：促销品订单
+customer_name|String|O|客户姓名
+
+样例报文：
+
+	{
+	'order_type':0,
+	'agent_id':'yonghu1',
+	'customer_name':'黄强',
+	'pageSize':8,
+	'pageNo':1
+	}
+
+######1.4 响应报文
+成功响应：
+
+	HTTP_STATUS_CODE:200
+
+响应报文说明：
+
+名称|类型|是否必填|说明
+---|---|---|---
+pageSize|Int|Y|每页显示记录数
+pageNo|Int|Y|当前页号
+recordsCount|Int|Y|总记录数
+pageNumber|Int|Y|总页数
+records|Array|N|当前页记录
+
+$$$$Records
+
+名称|类型|是否必填|说明
+---|---|---|---
+orders_no|String|Y|订单号
+orders_type|INT|Y|订单类型。0：首期订单；1：促销品订单
+customer_name|String|Y|客户姓名
+customer_phone|String|Y|客户手机
+customer_tel|String|Y|客户电话
+customer_addr|String|Y|客户地址
+has_invoice|int|Y|是否有发票。0：无；1：有
+amount|decimal|Y|总金额
+payment|INT|Y|支付方式，1银行;2支付宝
+status|INT|Y|状态。-1已退款；0未付款；1已付款；2已审核；3已发货货；4已完成
+
+
+样例报文：
+
+	{
+		'pageSize':8,
+		'pageNo':1,
+		'recordsCount':1,
+		'pageNumber':1,
+		'records':[{
+			'orders_no':'001010101',
+			'order_type':0,
+			'customer_name':'yonghu1',
+			'customer_addr':'北京市天安门',
+			'customer_tel':'18600000000',
+			'has_invoice':0,
+			'amount':10.00,
+			'payment':2,
+			'status':4
+		}]
+	}
+
+异常响应：
+
+	a．	HTTP_STATUS_CODE:400 Bad request；
+	b．	HTTP_STATUS_CODE:500 Server Error
+
+异常报文：
+
+名称 | 类型 | 说明
+------------ | ------------- | ------------
+error| String  | 错误信息
+
+样例报文：
+
+	{'error':'Orders query error.'}
+
