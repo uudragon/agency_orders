@@ -370,16 +370,16 @@ error| String  | 错误信息
 	
 ----
 
-#####2. 代理商订单查询接口
+#####7. 代理商订单查询接口
 此接口用于查询代理商订单列表
-######2.1 url
+######7.1 url
 	method: GET
 	agency/orders/query_all/
 	注意：结尾的’/’不能省略
-######2.2 header
+######7.2 header
 	Content_Type:application/json;charset=utf-8
 	Accept:application/json
-######2.3 请求参数
+######7.3 请求参数
 名称|类型|是否必填|说明
 ---|---|---|---
 pageSize|Int|Y|每页显示记录数
@@ -398,7 +398,7 @@ customer_name|String|O|客户姓名
 	'pageNo':1
 	}
 
-######1.4 响应报文
+######7.4 响应报文
 成功响应：
 
 	HTTP_STATUS_CODE:200
