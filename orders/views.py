@@ -1,9 +1,12 @@
+import json
 import logging
 from datetime import datetime
+import uuid
 from django.core.paginator import Paginator
 
 # Create your views here.
 from django.db import transaction
+import requests
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -13,6 +16,114 @@ from uudragon_agency.local.settings import DEFAULT_PAGE_SIZE, STATUS_PAYMENT_COM
     STATUS_CHECK_COMPLETED
 
 LOG = logging.getLogger(__name__)
+
+
+@api_view(['GET'])
+def query_all_orderss(request):
+    message = request.GET
+
+    LOG.info('Current method is [query_orderss], received message is %s' % message)
+
+    pageSize = message.get('pageSize')
+    if pageSize is None or pageSize == 0:
+        pageSize = DEFAULT_PAGE_SIZE
+    pageNo = message.get('pageNo')
+    if pageNo is None or pageNo == 0:
+        pageNo = 1
+
+    LOG.debug('Current message is %s' % message)
+
+    query_dict = dict()
+
+    if message.get('order_type') is not None:
+        query_dict['order_type'] = message.get('order_type')
+    if message.get('status') is not None:
+        query_dict['status'] = message.get('status')
+    if message.get('agent_id') is not None:
+        query_dict['agent_id'] = message.get('agent_id')
+
+    resp_message = dict()
+
+    try:
+        orders_list = Orders.objects.filter(**query_dict).order_by('order_time')
+        paginator = Paginator(orders_list, pageSize, orphans=0, allow_empty_first_page=True)
+        total_page_count = paginator.num_pages
+        if pageNo > total_page_count:
+            pageNo = total_page_count
+        elif pageNo < 1:
+            pageNo = 1
+        cur_page = paginator.page(pageNo)
+        page_records = cur_page.object_list
+        resp_array = []
+        for item in page_records:
+            record_seria = OrdersSerializer(item)
+            resp_array.append(record_seria.data)
+        resp_message['records'] = resp_array
+        resp_message['recordsCount'] = paginator.count
+        resp_message['pageSize'] = pageSize
+        resp_message['pageNumber'] = total_page_count
+        resp_message['pageNo'] = pageNo
+    except Exception as e:
+        LOG.error('Query orderss information error. [ERROR] %s' % str(e))
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        data={'error': 'Query orderss information error'},
+                        content_type='application/json;charset=utf-8')
+    return Response(status=status.HTTP_200_OK, data=resp_message, content_type='application/json;charset=utf-8')
+
+@api_view(['POST'])
+@transaction.commit_manually
+def check_orders(request, order_no):
+    message = request.DATA
+    LOG.info('Current method is [check_orders], received order_no is %s' % order_no)
+    LOG.info('Current received message is %s' % message)
+
+    if order_no is None:
+        LOG.error('The parameter [order_no] of request can not be none.')
+        return Response(status=status.HTTP_400_BAD_REQUEST,
+                        data={'error': 'The parameter [order_no] of request can not be none.'},
+                        content_type='application/json;charset=utf-8')
+
+    if message.get('updater') is None:
+        LOG.error('The parameter [updater] of request can not be none.')
+        return Response(status=status.HTTP_400_BAD_REQUEST,
+                        data={'error': 'The parameter [updater] of request can not be none.'},
+                        content_type='application/json;charset=utf-8')
+
+    try:
+        orders = Orders.objects.select_for_update().filter(order_no=order_no)
+        orders_details = OrdersDetails.objects.filter(order_no=order_no)
+        body = dict()
+        body['shipment_no'] = uuid.uuid4()
+        body['orders_no'] = orders.order_no
+        body['source'] = 1
+        body['customer_name'] = orders.customer_name
+        body['address'] = orders.customer_addr
+        body['customer_tel'] = orders.customer_phone
+        body['has_invoice'] = orders.has_invoice
+        #body['sent_date'] =
+        body['amount'] = orders.amount
+        body['creator'] = message.get('updater')
+        body['updater'] = message.get('updater')
+        items = []
+        for detail in orders_details:
+            item = dict()
+            item['code'] = detail.code
+            item['is_product'] = 1 if orders.order_type == 0 else 0
+            item['is_gift'] = 1 if orders.order_type == 1 else 0
+            item['qty'] = detail.qty
+            items.append(item)
+        body['details'] = items
+        response = requests.post("http://localhost:9099/wms/outbound/shipment/save/", data=json.dumps(body), timeout=60)
+        response.raise_for_status()
+        orders.status = STATUS_CHECK_COMPLETED
+        transaction.commit()
+    except Exception as e:
+        LOG.error('Orders Check Error. [ERROR] %s' % str(e))
+        transaction.rollback()
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        data={'error': 'Orders Check Error. [order_no] is %s' % order_no},
+                        content_type='application/json;charset=utf-8')
+    return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -178,23 +289,5 @@ def payment_rollback(request):
                         content_type='application/json;charset=utf-8')
     return Response(status=status.HTTP_200_OK)
 
-
-@api_view(['GET'])
-@transaction.commit_manually
-def check_completed(request, orders_no):
-    LOG.info('Current method is [check_completed], received [orders_no] is %s' % orders_no)
-
-    try:
-        orders = Orders.objects.filter(order_no=orders_no).select_for_update().first()
-        orders.status = STATUS_CHECK_COMPLETED
-        orders.save()
-        transaction.commit()
-    except Exception as e:
-        LOG.error('Orders check error. [ERROR] %s' % str(e))
-        transaction.rollback()
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        data={'error': 'Orders checks error. [order_no] is %s' % orders_no},
-                        content_type='application/json;charset=utf-8')
-    return Response(status=status.HTTP_200_OK)
 
 
