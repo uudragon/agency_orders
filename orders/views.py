@@ -90,7 +90,7 @@ def check_orders(request, order_no):
                         content_type='application/json;charset=utf-8')
 
     try:
-        orders = Orders.objects.select_for_update().filter(order_no=order_no)
+        orders = Orders.objects.select_for_update().filter(order_no=order_no).first()
         orders_details = OrdersDetails.objects.filter(order_no=order_no)
         body = dict()
         body['shipment_no'] = uuid.uuid4()
