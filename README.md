@@ -339,14 +339,19 @@ error| String  | 错误信息
 #####6. 审核完成接口
 此接口用于在客服审核订单后，修改订单状态
 ######6.1 url
-	method: GET
-	agency/orders/payment/${order_no}/check
+	method: POST
+	agency/orders/check_orders/${order_no}/
 	注意：结尾的’/’不能省略，${order_no}为订单号
 ######6.2 header
 	Content_Type:application/json;charset=utf-8
 	Accept:application/json
 ######6.3 请求参数
-无
+名称 | 类型 | 说明
+------------ | ------------- | ------------
+updater| String  | 更新人（当前操作员id）
+
+样例报文：
+    {'updater':'admin'}
 
 ######6.4 响应报文
 成功响应：
