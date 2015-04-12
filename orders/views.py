@@ -112,9 +112,10 @@ def check_orders(request, order_no):
             item['is_gift'] = 1 if orders.order_type == 1 else 0
             item['qty'] = detail.qty
         body['details'] = items
-        data = json.dumps(body)
+        request_data = json.dumps(body)
+        LOG.info('Current request body to wms is %s' % request_data)
         response = requests.post("http://bam.uudragon.com/wms/outbound/shipment/save/",
-                                 JSON_REQUEST_HEADERS, data=data, timeout=60)
+                                 headers=JSON_REQUEST_HEADERS, data=request_data, timeout=60)
         response.raise_for_status()
         orders.status = STATUS_CHECK_COMPLETED
         transaction.commit()
