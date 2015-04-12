@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from db.models import Orders, OrdersDetails
 from serializers.serializers import OrdersSerializer, OrdersDetailsSerializer
 from uudragon_agency.local.settings import DEFAULT_PAGE_SIZE, STATUS_PAYMENT_COMPLETED, STATUS_PAYMENT_ROLLBACK, \
-    STATUS_CHECK_COMPLETED
+    STATUS_CHECK_COMPLETED, JSON_REQUEST_HEADERS
 
 LOG = logging.getLogger(__name__)
 
@@ -111,9 +111,10 @@ def check_orders(request, order_no):
             item['is_product'] = 1 if orders.order_type == 0 else 0
             item['is_gift'] = 1 if orders.order_type == 1 else 0
             item['qty'] = detail.qty
-            items.append(item)
         body['details'] = items
-        response = requests.post("http://bam.uudragon.com/wms/outbound/shipment/save/", data=json.dumps(body), timeout=60)
+        data = json.dumps(body)
+        response = requests.post("http://bam.uudragon.com/wms/outbound/shipment/save/",
+                                 JSON_REQUEST_HEADERS, data=data, timeout=60)
         response.raise_for_status()
         orders.status = STATUS_CHECK_COMPLETED
         transaction.commit()
