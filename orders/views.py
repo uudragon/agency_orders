@@ -101,7 +101,7 @@ def check_orders(request, order_no):
         body['customer_tel'] = orders.customer_phone
         body['has_invoice'] = orders.has_invoice
         #body['sent_date'] =
-        body['amount'] = orders.amount
+        body['amount'] = float(orders.amount)
         body['creator'] = message.get('updater')
         body['updater'] = message.get('updater')
         items = []
