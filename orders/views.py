@@ -113,7 +113,7 @@ def check_orders(request, order_no):
             item['qty'] = detail.qty
             items.append(item)
         body['details'] = items
-        response = requests.post("http://localhost:9099/wms/outbound/shipment/save/", data=json.dumps(body), timeout=60)
+        response = requests.post("http://bam.uudragon.com/wms/outbound/shipment/save/", data=json.dumps(body), timeout=60)
         response.raise_for_status()
         orders.status = STATUS_CHECK_COMPLETED
         transaction.commit()
