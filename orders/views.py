@@ -120,6 +120,7 @@ def check_orders(request, order_no):
                                  headers=JSON_REQUEST_HEADERS, data=request_data, timeout=60)
         response.raise_for_status()
         orders.status = STATUS_CHECK_COMPLETED
+        orders.save()
         transaction.commit()
     except Exception as e:
         LOG.error('Orders Check Error. [ERROR] %s' % str(e))
