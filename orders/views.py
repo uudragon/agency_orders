@@ -98,7 +98,7 @@ def check_orders(request, order_no):
         body['source'] = 1
         body['customer_name'] = orders.customer_name
         body['address'] = orders.customer_addr
-        body['customer_tel'] = orders.customer_phone
+        body['customer_tel'] = orders.customer_tel
         body['has_invoice'] = orders.has_invoice
         #body['sent_date'] =
         body['amount'] = float(orders.amount)
