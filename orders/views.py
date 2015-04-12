@@ -111,6 +111,7 @@ def check_orders(request, order_no):
             item['is_product'] = 1 if orders.order_type == 0 else 0
             item['is_gift'] = 1 if orders.order_type == 1 else 0
             item['qty'] = detail.qty
+            items.append(item)
         body['details'] = items
         request_data = json.dumps(body)
         LOG.info('Current request body to wms is %s' % request_data)
