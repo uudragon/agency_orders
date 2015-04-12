@@ -93,7 +93,7 @@ def check_orders(request, order_no):
         orders = Orders.objects.select_for_update().filter(order_no=order_no).first()
         orders_details = OrdersDetails.objects.filter(order_no=order_no)
         body = dict()
-        body['shipment_no'] = uuid.uuid4()
+        body['shipment_no'] = str(uuid.uuid4())
         body['orders_no'] = orders.order_no
         body['source'] = 1
         body['customer_name'] = orders.customer_name
