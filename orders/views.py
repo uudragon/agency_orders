@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from db.models import Orders, OrdersDetails
 from serializers.serializers import OrdersSerializer, OrdersDetailsSerializer
 from uudragon_agency.local.settings import DEFAULT_PAGE_SIZE, STATUS_PAYMENT_COMPLETED, STATUS_PAYMENT_ROLLBACK, \
-    STATUS_CHECK_COMPLETED, JSON_REQUEST_HEADERS
+    STATUS_CHECK_COMPLETED, JSON_REQUEST_HEADERS, PAYMENT_TRADE_FINISHED, PAYMENT_TRADE_SUCCESS
 
 LOG = logging.getLogger(__name__)
 
@@ -256,22 +256,28 @@ def save_orders(request):
     return Response(status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 @transaction.commit_manually
-def payment_completed(request, orders_no):
-    LOG.info('Current method is [payment_completed], received [orders_no] is %s' % orders_no)
+def payment_completed(request):
+    message = request.DATA
+    LOG.info('Current method is [payment_completed], received message is %s' % message)
 
-    try:
-        orders = Orders.objects.filter(order_no=orders_no).select_for_update().first()
-        orders.status = STATUS_PAYMENT_COMPLETED
-        orders.save()
-        transaction.commit()
-    except Exception as e:
-        LOG.error('Orders payment error. [ERROR] %s' % str(e))
-        transaction.rollback()
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        data={'error': 'Orders payment error. [order_no] is %s' % orders_no},
-                        content_type='application/json;charset=utf-8')
+    orders_no = message.get('trade_no')
+    out_orders_no = message.get('out_trade_no')
+    orders_status = message.get('trade_status')
+
+    if orders_status == PAYMENT_TRADE_FINISHED or orders_status == PAYMENT_TRADE_SUCCESS:
+        try:
+            orders = Orders.objects.filter(order_no=orders_no).select_for_update().first()
+            orders.status = STATUS_PAYMENT_COMPLETED
+            orders.save()
+            transaction.commit()
+        except Exception as e:
+            LOG.error('Orders payment error. [ERROR] %s' % str(e))
+            transaction.rollback()
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            data={'error': 'Orders payment error. [order_no] is %s' % orders_no},
+                            content_type='application/json;charset=utf-8')
     return Response(status=status.HTTP_200_OK)
 
 
