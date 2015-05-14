@@ -262,8 +262,8 @@ def payment_completed(request):
     message = request.DATA
     LOG.info('Current method is [payment_completed], received message is %s' % message)
 
-    orders_no = message.get('trade_no')
-    out_orders_no = message.get('out_trade_no')
+    trade_no = message.get('trade_no')
+    orders_no = message.get('out_trade_no')
     orders_status = message.get('trade_status')
 
     if orders_status == PAYMENT_TRADE_FINISHED or orders_status == PAYMENT_TRADE_SUCCESS:
