@@ -24,10 +24,10 @@ def query_all_orderss(request):
 
     LOG.info('Current method is [query_orderss], received message is %s' % message)
 
-    pageSize = message.get('pageSize')
+    pageSize = int(message.get('pageSize'))
     if pageSize is None or pageSize == 0:
         pageSize = DEFAULT_PAGE_SIZE
-    pageNo = message.get('pageNo')
+    pageNo = int(message.get('pageNo'))
     if pageNo is None or pageNo == 0:
         pageNo = 1
 
