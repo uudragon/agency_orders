@@ -36,7 +36,7 @@ def query_all_orderss(request):
     query_dict = dict()
 
     if message.get('order_type') is not None:
-        query_dict['order_type'] = message.get('order_type')
+        query_dict['order_type'] = int(message.get('order_type'))
     if message.get('customer_name') is not None:
         query_dict['customer_name'] = message.get('customer_name')
     if message.get('agent_id') is not None:
