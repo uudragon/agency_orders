@@ -63,6 +63,7 @@ def query_all_orderss(request):
         resp_message['pageSize'] = pageSize
         resp_message['pageNumber'] = total_page_count
         resp_message['pageNo'] = pageNo
+        LOG.info('Current response is %s' % resp_message)
     except Exception as e:
         LOG.error('Query orderss information error. [ERROR] %s' % str(e))
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR,
