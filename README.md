@@ -392,6 +392,9 @@ pageNo|Int|Y|当前页号
 agent_id|String|O|代理商号
 orders_type|INT|O|订单类型。0：首期订单；1：促销品订单
 customer_name|String|O|客户姓名
+begin_date|String|O|起始时间，格式YYYY-MM-DD
+end_date|String|O|结束时间，格式YYYY-MM-DD
+status|INT|O|订单状态，-1已退款；0未付款；1已付款；
 
 样例报文：
 

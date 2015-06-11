@@ -36,11 +36,17 @@ def query_all_orderss(request):
     query_dict = dict()
 
     if message.get('order_type') is not None:
-        query_dict['order_type'] = int(message.get('order_type'))
+        query_dict['order_type__exact'] = int(message.get('order_type'))
     if message.get('customer_name') is not None:
-        query_dict['customer_name'] = message.get('customer_name')
+        query_dict['customer_name__exact'] = message.get('customer_name')
     if message.get('agent_id') is not None:
-        query_dict['agent_id'] = message.get('agent_id')
+        query_dict['agent_id__exact'] = message.get('agent_id')
+    if message.get('begin_date') is not None:
+        query_dict['order_time__gte'] = datetime.strptime(message.get('begin_date'), '%Y-%m-%d')
+    if message.get('end_date') is not None:
+        query_dict['order_time__lte'] = datetime.strptime(message.get('end_date'), '%Y-%m-%d')
+    if message.get('status') is not None:
+        query_dict['status__exact'] = message.get('status')
 
     resp_message = dict()
 
@@ -70,6 +76,7 @@ def query_all_orderss(request):
                         data={'error': 'Query orderss information error'},
                         content_type='application/json;charset=utf-8')
     return Response(status=status.HTTP_200_OK, data=resp_message, content_type='application/json;charset=utf-8')
+
 
 @api_view(['POST'])
 @transaction.commit_manually
