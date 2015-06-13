@@ -46,7 +46,7 @@ def query_all_orderss(request):
     if message.get('end_date') is not None:
         query_dict['order_time__lte'] = datetime.strptime(message.get('end_date'), '%Y-%m-%d')
     if message.get('status') is not None:
-        query_dict['status__exact'] = message.get('status')
+        query_dict['status__gte'] = message.get('status')
 
     resp_message = dict()
 
